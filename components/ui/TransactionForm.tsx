@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { Modal, View, Text, TextInput, Button, StyleSheet } from 'react-native';
+import { Switch } from 'react-native';
 
 type Props = {
     visible: boolean;
     onClose: () => void;
-    onSubmit: (data: { descricao: string; valor: number; data: string }) => void;
+    onSubmit: (data: { descricao: string; valor: number; data: string; pago: boolean}) => void;
     tipo: 'receita' | 'despesa';
 };
 
@@ -12,13 +13,14 @@ export function TransactionForm({ visible, onClose, onSubmit, tipo }: Props) {
     const [descricao, setDescricao] = useState('');
     const [valor, setValor] = useState('');
     const [data, setData] = useState('');
+    const [pago, setPago] = useState(false);
 
     function handleSubmit() {
         if (!descricao || !valor || !data) {
             alert('Preencha todos os campos!');
             return;
         }
-        onSubmit({ descricao, valor: Number(valor), data });
+        onSubmit({ descricao, valor: Number(valor), data, pago});
         setDescricao('');
         setValor('');
         setData('');
@@ -45,10 +47,18 @@ export function TransactionForm({ visible, onClose, onSubmit, tipo }: Props) {
                     />
                     <TextInput
                         style={styles.input}
-                        placeholder="Data (YYYY-MM-DD)"
+                        placeholder={tipo === 'receita' ? 'Recebido em:' : 'Vencimento:'}
                         value={data}
                         onChangeText={setData}
                     />
+                    <View style={styles.switch}>
+                    <Text>Pago</Text>
+                    <Switch
+                    value={pago}
+                    onValueChange={setPago}
+                    />
+                    </View>
+
                     <View style={styles.buttonRow}>
                         <Button title="Cancelar" onPress={onClose} color="#888" />
                         <Button title="Salvar" onPress={handleSubmit} color={tipo === 'receita' ? '#2e7d32' : '#c62828'} />
@@ -86,4 +96,12 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         marginTop: 12,
     },
+    switch: {
+        flexDirection: 'row',    
+        alignItems: 'center',     
+        gap: 8,                     
+        marginVertical: 12,         
+    }
+          
+    
 });

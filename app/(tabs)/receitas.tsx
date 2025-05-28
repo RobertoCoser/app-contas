@@ -5,18 +5,18 @@ import { TransactionForm } from '../../components/ui/TransactionForm';
 import { useTransacoes } from '../../contexts/TransacoesContext';
 
 export default function Receitas() {
-  const { transacoes, adicionarTransacao } = useTransacoes();
+  const { transacoes, adicionarTransacao, alternarPago } = useTransacoes();
   const receitas = transacoes.filter(t => t.tipo === 'receita');
   const [modalVisible, setModalVisible] = useState(false);
 
-  function handleAdicionarReceita(data: { descricao: string; valor: number; data: string }) {
-    adicionarTransacao({ ...data, tipo: 'receita' });
+  function handleAdicionarReceita(data: { descricao: string; valor: number; data: string; }) {
+    adicionarTransacao({ ...data, tipo: 'receita', pago: data.pago ?? false });
   }
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Receitas</Text>
-      <TransactionList transacoes={receitas} tipo="receita" />
+      <TransactionList transacoes={receitas} tipo="receita" onTogglePago={alternarPago} />
       <Button title="Adicionar Receita" onPress={() => setModalVisible(true)} />
       <TransactionForm
         visible={modalVisible}
