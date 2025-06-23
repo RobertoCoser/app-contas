@@ -12,7 +12,7 @@ module.exports = {
   test: {
     username: 'root',
     password: '',
-    database: 'appcontas_test',
+    database: 'appcontas',
     host: 'localhost',
     dialect: 'mysql',
   },

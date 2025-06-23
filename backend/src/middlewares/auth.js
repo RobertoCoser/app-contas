@@ -1,16 +1,16 @@
 import jwt from 'jsonwebtoken';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'chave_secreta';
+const secret = process.env.JWT_SECRET || 'seuSegredo';
 
-export function autenticar(req, res, next) {
-  const token = req.headers.authorization?.split(' ')[1];
-  if (!token) return res.status(401).json({ erro: 'Token não fornecido' });
+export const autenticar = (req, res, next) => {
+  const token = req.headers.authorization;
 
-  try {
-    const decoded = jwt.verify(token, JWT_SECRET);
-    req.usuario = decoded;
+  if (!token) return res.status(401).json({ error: 'Token não fornecido.' });
+
+  jwt.verify(token, secret, (err, decoded) => {
+    if (err) return res.status(401).json({ error: 'Token inválido.' });
+
+    req.usuarioId = decoded.id;
     next();
-  } catch (err) {
-    res.status(403).json({ erro: 'Token inválido' });
-  }
-}
+  });
+};

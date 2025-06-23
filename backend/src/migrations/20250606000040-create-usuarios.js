@@ -2,32 +2,25 @@
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('Transacoes', {
+    await queryInterface.createTable('Usuarios', {
       id: {
         type: Sequelize.INTEGER,
         autoIncrement: true,
         primaryKey: true,
         allowNull: false
       },
-      descricao: {
+      nome: {
         type: Sequelize.STRING,
         allowNull: false
       },
-      valor: {
-        type: Sequelize.FLOAT,
-        allowNull: false
+      email: {
+        type: Sequelize.STRING,
+        allowNull: false,
+        unique: true
       },
-      data: {
-        type: Sequelize.DATEONLY,
+      senha: {
+        type: Sequelize.STRING,
         allowNull: false
-      },
-      tipo: {
-        type: Sequelize.ENUM('receita', 'despesa'),
-        allowNull: false
-      },
-      pago: {
-        type: Sequelize.BOOLEAN,
-        defaultValue: false
       },
       createdAt: {
         type: Sequelize.DATE,
@@ -41,6 +34,6 @@ module.exports = {
   },
 
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('Transacoes');
+    await queryInterface.dropTable('Usuarios');
   }
 };
