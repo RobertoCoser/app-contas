@@ -1,50 +1,87 @@
-# Welcome to your Expo app 👋
+# Controle Financeiro Pessoal
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Aplicativo mobile para controle de receitas, despesas e saldo, desenvolvido em React Native com Expo.
 
-## Get started
+## Recursos
 
-1. Install dependencies
+- Cadastro e login de usuários
+- Adicionar, editar e excluir receitas e despesas
+- Visualização de saldo total, receitas e despesas
+- Navegação entre telas de resumo, receitas, despesas e gráfico
+- Edição de transações ao tocar nelas
+- Interface moderna e responsiva
+
+## Tecnologias Utilizadas
+
+- [React Native](https://reactnative.dev/)
+- [Expo](https://expo.dev/)
+- [Expo Router](https://docs.expo.dev/router/introduction/)
+- [Context API](https://react.dev/reference/react/useContext) para estado global
+- [Axios](https://axios-http.com/) para requisições HTTP
+
+## Instalação e uso do App
+
+1. Instale as dependências:
 
    ```bash
    npm install
    ```
 
-2. Start the app
+2. Inicie o app:
 
    ```bash
    npx expo start
    ```
 
-In the output, you'll find options to open the app in a
+   Você pode rodar em:
+   - Celular físico (usando o QR code no Expo Go)
+   - Emulador Android/iOS
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+3. Certifique-se de que a API/backend está rodando e atualize o endereço da API nos arquivos de autenticação/cadastro se necessário.
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+## Instruções para rodar a API
 
-## Get a fresh project
+1. Clone o repositório do backend (caso não esteja neste mesmo projeto):
 
-When you're ready, run:
+   ```bash
+   git clone https://github.com/RobertoCoser/seu-backend-repo.git
+   cd seu-backend-repo
+   ```
 
-```bash
-npm run reset-project
-```
+2. Instale as dependências do backend:
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+   ```bash
+   npm install
+   ```
 
-## Learn more
+3. Configure as variáveis de ambiente se necessário (por exemplo, `.env`).
 
-To learn more about developing your project with Expo, look at the following resources:
+4. Inicie o servidor da API:
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+   ```bash
+   npm start
+   ```
 
-## Join the community
+   Por padrão, a API roda em `http://localhost:3000`.  
+   **Se for rodar o app mobile no dispositivo físico, substitua `localhost` pelo IP da sua máquina no código do app.**
 
-Join our community of developers creating universal apps.
+## Como usar
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+1. Faça cadastro ou login.
+2. Gerencie receitas e despesas tocando em "Adicionar" ou editando itens da lista.
+3. Navegue entre as abas para ver resumo, receitas, despesas ou gráfico.
+4. Saia pelo botão "Sair" na tela inicial.
+
+## Personalização
+
+- Cores e fontes estão em `theme.ts`
+- Altere a URL da API nos contextos conforme necessário
+
+## Licença
+
+MIT
+
+---
+
+Desenvolvido por [Roberto Coser](https://github.com/RobertoCoser)
+            e [Elias Formentini](https://github.com/EliasFormentini)

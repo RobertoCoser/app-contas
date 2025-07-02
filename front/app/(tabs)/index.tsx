@@ -1,56 +1,88 @@
-import React, { useContext } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Button } from 'react-native';
-import { CardFinanceiro } from '../../components/ui/CardFinanceiro';
+import React from 'react';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import Header from '../../components/ui/Header';
+import PrimaryButton from '../../components/ui/PrimaryButton';
 import { useTransacoes } from '../../contexts/TransacoesContext';
+import { useAuth } from '../../contexts/AuthContext';
+import { theme } from '../../theme';
 import { useRouter } from 'expo-router';
-import ProtectedRoute from '../../components/ProtectedRoute';
-import { AuthContext } from '../../contexts/AuthContext'; // <-- importe aqui
 
-export default function Dashboard() {
+export default function Home() {
   const { transacoes } = useTransacoes();
+  const { signOut } = useAuth();
   const router = useRouter();
-  const { signOut } = useContext(AuthContext); // <-- use o contexto
 
-  const totalReceitas = transacoes
-    .filter(t => t.tipo === 'receita')
-    .reduce((soma, t) => soma + t.valor, 0);
-
-  const totalDespesas = transacoes
-    .filter(t => t.tipo === 'despesa')
-    .reduce((soma, t) => soma + t.valor, 0);
-
+  const receitas = transacoes.filter(t => t.tipo === 'receita');
+  const despesas = transacoes.filter(t => t.tipo === 'despesa');
+  const totalReceitas = receitas.reduce((acc, cur) => acc + cur.valor, 0);
+  const totalDespesas = despesas.reduce((acc, cur) => acc + cur.valor, 0);
   const saldo = totalReceitas - totalDespesas;
 
-  function handleLogout() {
-    signOut();
-    router.replace('/login'); // Garante navegação para a tela de login
-  }
-
   return (
-    <ProtectedRoute>
-      <View style={styles.container}>
-        <Text style={styles.title}>Resumo Financeiro</Text>
-        <CardFinanceiro tipo="saldo" valor={saldo} />
-        <View style={styles.row}>
-          <TouchableOpacity style={styles.flex} onPress={() => router.push('/receitas')}>
-            <CardFinanceiro tipo="receita" valor={totalReceitas} />
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.flex} onPress={() => router.push('/despesas')}>
-            <CardFinanceiro tipo="despesa" valor={totalDespesas} />
-          </TouchableOpacity>
-        </View>
+    <View style={styles.screen}>
+      <Header title="Resumo Financeiro" />
 
-        <View style={{ marginTop: 32 }}>
-          <Button title="Sair" color="#d9534f" onPress={handleLogout} />
-        </View>
+      <View style={styles.cardContainer}>
+        <TouchableOpacity style={styles.card} onPress={() => router.push('/explore')} activeOpacity={0.8}>
+          <Text style={styles.label}>Saldo</Text>
+          <Text style={styles.saldo}>R$ {saldo.toFixed(2)}</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={[styles.card, { borderLeftColor: theme.colors.success }]} onPress={() => router.push('/receitas')} activeOpacity={0.8}>
+          <Text style={styles.label}>Receitas</Text>
+          <Text style={[styles.valor, { color: theme.colors.success }]}>+ R$ {totalReceitas.toFixed(2)}</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={[styles.card, { borderLeftColor: theme.colors.error }]} onPress={() => router.push('/despesas')} activeOpacity={0.8}>
+          <Text style={styles.label}>Despesas</Text>
+          <Text style={[styles.valor, { color: theme.colors.error }]}>- R$ {totalDespesas.toFixed(2)}</Text>
+        </TouchableOpacity>
       </View>
-    </ProtectedRoute>
+
+      <PrimaryButton
+        title="Sair"
+        onPress={signOut}
+        style={styles.logoutButton}
+        textStyle={{ color: theme.colors.error }}
+      />
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 16, backgroundColor: '#fff' },
-  title: { fontSize: 24, fontWeight: 'bold', marginBottom: 16 },
-  row: { flexDirection: 'row', justifyContent: 'space-between', marginTop: 16 },
-  flex: { flex: 1 }
+  screen: {
+    flex: 1,
+    backgroundColor: theme.colors.background,
+    padding: theme.spacing.screen,
+  },
+  cardContainer: {
+    marginVertical: 24,
+  },
+  card: {
+    backgroundColor: theme.colors.card,
+    borderRadius: theme.borderRadius.card,
+    padding: theme.spacing.item,
+    marginBottom: 16,
+    borderLeftWidth: 6,
+    borderLeftColor: theme.colors.primary,
+    ...theme.shadow.card,
+  },
+  label: {
+    color: theme.colors.textSecondary,
+    fontSize: theme.font.size.small,
+    marginBottom: 4,
+  },
+  saldo: {
+    fontSize: theme.font.size.large,
+    fontWeight: theme.font.weight.bold,
+    color: theme.colors.text,
+  },
+  valor: {
+    fontSize: theme.font.size.medium,
+    fontWeight: theme.font.weight.bold,
+  },
+  logoutButton: {
+    marginTop: 32,
+    backgroundColor: theme.colors.background,
+    borderWidth: 1,
+    borderColor: theme.colors.error,
+  },
 });

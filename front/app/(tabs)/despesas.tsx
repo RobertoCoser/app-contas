@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
-import { View, Text, Button, StyleSheet } from 'react-native';
-import { TransactionList } from '../../components/ui/TransactionList';
-import { TransactionForm } from '../../components/ui/TransactionForm';
+import { View, FlatList, StyleSheet, Text } from 'react-native';
+import Header from '../../components/ui/Header';
+import PrimaryButton from '../../components/ui/PrimaryButton';
+import { TransactionCard } from '../../components/ui/TransactionCard';
 import { useTransacoes } from '../../contexts/TransacoesContext';
+import TransactionForm from '../../components/ui/TransactionForm';
 import ProtectedRoute from '../../components/ProtectedRoute';
+import { theme } from '../../theme';
 
 export default function Despesas() {
     const { transacoes, adicionarTransacao, editarTransacao } = useTransacoes();
@@ -17,32 +20,33 @@ export default function Despesas() {
     }
 
     function handleEditarDespesa(data) {
+        // Garante que o id original vá junto!
         editarTransacao({ ...editingDespesa, ...data });
         setEditingDespesa(null);
     }
 
-    function handleOpenEdit(despesa) {
-        setEditingDespesa(despesa);
-    }
-
     return (
         <ProtectedRoute>
-            <View style={styles.container}>
-                <Text style={styles.title}>Despesas</Text>
-                <TransactionList
-                    transacoes={despesas}
-                    tipo="despesa"
-                    onPressItem={handleOpenEdit}
+            <View style={styles.screen}>
+                <Header title="Despesas" />
+                <FlatList
+                    data={despesas}
+                    keyExtractor={item => item.id}
+                    renderItem={({ item }) => (
+                        <TransactionCard {...item} onPress={() => setEditingDespesa(item)} />
+                    )}
+                    contentContainerStyle={{ padding: theme.spacing.screen }}
+                    ListEmptyComponent={
+                        <Text style={styles.emptyText}>Nenhuma despesa cadastrada.</Text>
+                    }
                 />
-                <Button title="Adicionar Despesa" onPress={() => setModalVisible(true)} />
-                {/* Formulário para nova despesa */}
+                <PrimaryButton title="Adicionar Despesa" onPress={() => setModalVisible(true)} />
                 <TransactionForm
                     visible={modalVisible}
                     onClose={() => setModalVisible(false)}
                     onSubmit={handleAdicionarDespesa}
                     tipo="despesa"
                 />
-                {/* Formulário para editar despesa */}
                 <TransactionForm
                     visible={!!editingDespesa}
                     onClose={() => setEditingDespesa(null)}
@@ -57,6 +61,14 @@ export default function Despesas() {
 }
 
 const styles = StyleSheet.create({
-    container: { flex: 1, padding: 16, backgroundColor: '#fff' },
-    title: { fontSize: 24, fontWeight: 'bold', marginBottom: 16 },
+    screen: {
+        flex: 1,
+        backgroundColor: theme.colors.background,
+    },
+    emptyText: {
+        textAlign: 'center',
+        color: theme.colors.textSecondary,
+        fontSize: theme.font.size.medium,
+        marginTop: 32,
+    }
 });

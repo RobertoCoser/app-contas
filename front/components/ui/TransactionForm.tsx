@@ -11,7 +11,7 @@ type Props = {
     isEdit?: boolean;
 };
 
-export function TransactionForm({ visible, onClose, onSubmit, tipo, transacao, isEdit }: Props) {
+export default function TransactionForm({ visible, onClose, onSubmit, tipo, transacao, isEdit }: Props) {
     const [descricao, setDescricao] = useState('');
     const [valor, setValor] = useState('');
     const [data, setData] = useState('');
