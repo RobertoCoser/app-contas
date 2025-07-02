@@ -6,13 +6,14 @@ type Transacao = {
     valor: number;
     data: string;
     tipo: 'receita' | 'despesa';
-    pago: boolean; // adiciona o campo pago
+    pago: boolean;
 };
 
 type TransacoesContextType = {
     transacoes: Transacao[];
     adicionarTransacao: (transacao: Omit<Transacao, 'id'>) => void;
-    alternarPago: (id: string) => void;  // nova função para alternar o pago
+    alternarPago: (id: string) => void;
+    editarTransacao: (transacaoEditada: Transacao) => void; // <-- novo!
 };
 
 const TransacoesContext = createContext<TransacoesContextType | undefined>(undefined);
@@ -25,7 +26,6 @@ export function useTransacoes() {
 
 export function TransacoesProvider({ children }: { children: ReactNode }) {
     const [transacoes, setTransacoes] = useState<Transacao[]>([
-        // Dados de exemplo, com campo pago (false por padrão)
         { id: '1', descricao: 'Salário', valor: 3500, data: '2025-05-01', tipo: 'receita', pago: true },
         { id: '2', descricao: 'Freelance', valor: 1200, data: '2025-05-10', tipo: 'receita', pago: false },
         { id: '3', descricao: 'Supermercado', valor: 400, data: '2025-05-05', tipo: 'despesa', pago: true },
@@ -47,8 +47,21 @@ export function TransacoesProvider({ children }: { children: ReactNode }) {
         );
     }
 
+    function editarTransacao(transacaoEditada: Transacao) {
+        setTransacoes(transacoes =>
+            transacoes.map(t =>
+                t.id === transacaoEditada.id ? { ...t, ...transacaoEditada } : t
+            )
+        );
+    }
+
     return (
-        <TransacoesContext.Provider value={{ transacoes, adicionarTransacao, alternarPago }}>
+        <TransacoesContext.Provider value={{
+            transacoes,
+            adicionarTransacao,
+            alternarPago,
+            editarTransacao // <-- exporta!
+        }}>
             {children}
         </TransacoesContext.Provider>
     );

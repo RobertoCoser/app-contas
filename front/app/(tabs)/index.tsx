@@ -1,13 +1,15 @@
-import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import React, { useContext } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, Button } from 'react-native';
 import { CardFinanceiro } from '../../components/ui/CardFinanceiro';
 import { useTransacoes } from '../../contexts/TransacoesContext';
 import { useRouter } from 'expo-router';
 import ProtectedRoute from '../../components/ProtectedRoute';
+import { AuthContext } from '../../contexts/AuthContext'; // <-- importe aqui
 
 export default function Dashboard() {
   const { transacoes } = useTransacoes();
   const router = useRouter();
+  const { signOut } = useContext(AuthContext); // <-- use o contexto
 
   const totalReceitas = transacoes
     .filter(t => t.tipo === 'receita')
@@ -18,6 +20,11 @@ export default function Dashboard() {
     .reduce((soma, t) => soma + t.valor, 0);
 
   const saldo = totalReceitas - totalDespesas;
+
+  function handleLogout() {
+    signOut();
+    router.replace('/login'); // Garante navegação para a tela de login
+  }
 
   return (
     <ProtectedRoute>
@@ -32,7 +39,10 @@ export default function Dashboard() {
             <CardFinanceiro tipo="despesa" valor={totalDespesas} />
           </TouchableOpacity>
         </View>
-        {/* Aqui você pode incluir gráficos ou listas de transações recentes */}
+
+        <View style={{ marginTop: 32 }}>
+          <Button title="Sair" color="#d9534f" onPress={handleLogout} />
+        </View>
       </View>
     </ProtectedRoute>
   );

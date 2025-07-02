@@ -6,32 +6,57 @@ import { useTransacoes } from '../../contexts/TransacoesContext';
 import ProtectedRoute from '../../components/ProtectedRoute';
 
 export default function Receitas() {
-  const { transacoes, adicionarTransacao, alternarPago } = useTransacoes();
-  const receitas = transacoes.filter(t => t.tipo === 'receita');
-  const [modalVisible, setModalVisible] = useState(false);
+    const { transacoes, adicionarTransacao, editarTransacao } = useTransacoes();
+    const receitas = transacoes.filter(t => t.tipo === 'receita');
+    const [modalVisible, setModalVisible] = useState(false);
+    const [editingReceita, setEditingReceita] = useState(null);
 
-  function handleAdicionarReceita(data: { descricao: string; valor: number; data: string; }) {
-    adicionarTransacao({ ...data, tipo: 'receita', pago: data.pago ?? false });
-  }
+    function handleAdicionarReceita(data) {
+        adicionarTransacao({ ...data, tipo: 'receita', pago: data.pago ?? false });
+        setModalVisible(false);
+    }
 
-  return (
-    <ProtectedRoute>
-      <View style={styles.container}>
-        <Text style={styles.title}>Receitas</Text>
-        <TransactionList transacoes={receitas} tipo="receita" onTogglePago={alternarPago} />
-        <Button title="Adicionar Receita" onPress={() => setModalVisible(true)} />
-        <TransactionForm
-          visible={modalVisible}
-          onClose={() => setModalVisible(false)}
-          onSubmit={handleAdicionarReceita}
-          tipo="receita"
-        />
-      </View>
-    </ProtectedRoute>
-  );
+    function handleEditarReceita(data) {
+        editarTransacao({ ...editingReceita, ...data });
+        setEditingReceita(null);
+    }
+
+    function handleOpenEdit(receita) {
+        setEditingReceita(receita);
+    }
+
+    return (
+        <ProtectedRoute>
+            <View style={styles.container}>
+                <Text style={styles.title}>Receitas</Text>
+                <TransactionList
+                    transacoes={receitas}
+                    tipo="receita"
+                    onPressItem={handleOpenEdit}
+                />
+                <Button title="Adicionar Receita" onPress={() => setModalVisible(true)} />
+                {/* Formulário para nova receita */}
+                <TransactionForm
+                    visible={modalVisible}
+                    onClose={() => setModalVisible(false)}
+                    onSubmit={handleAdicionarReceita}
+                    tipo="receita"
+                />
+                {/* Formulário para editar receita */}
+                <TransactionForm
+                    visible={!!editingReceita}
+                    onClose={() => setEditingReceita(null)}
+                    onSubmit={handleEditarReceita}
+                    tipo="receita"
+                    transacao={editingReceita}
+                    isEdit
+                />
+            </View>
+        </ProtectedRoute>
+    );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 16, backgroundColor: '#fff' },
-  title: { fontSize: 24, fontWeight: 'bold', marginBottom: 16 },
+    container: { flex: 1, padding: 16, backgroundColor: '#fff' },
+    title: { fontSize: 24, fontWeight: 'bold', marginBottom: 16 },
 });

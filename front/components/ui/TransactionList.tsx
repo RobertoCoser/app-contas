@@ -1,6 +1,5 @@
 import React from 'react';
-import { View, Text, FlatList, StyleSheet } from 'react-native';
-import { TouchableOpacity } from 'react-native';
+import { View, Text, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
 
 type Transacao = {
     id: string;
@@ -13,25 +12,29 @@ type Transacao = {
 type Props = {
     transacoes: Transacao[];
     tipo: 'receita' | 'despesa';
-    onTogglePago: (id: string) => void; // novo
-
+    onPressItem?: (transacao: Transacao) => void; // agora recebe a transação
 };
 
-export function TransactionList({ transacoes, tipo, onTogglePago }: Props) {
+export function TransactionList({ transacoes, tipo, onPressItem }: Props) {
     return (
         <FlatList
             data={transacoes}
             keyExtractor={item => item.id}
             renderItem={({ item }) => (
-                <TouchableOpacity onPress={() => onTogglePago(item.id)} style={styles.item}>
+                <TouchableOpacity
+                    onPress={() => onPressItem && onPressItem(item)}
+                    style={styles.item}
+                >
                     <Text style={styles.descricao}>{item.descricao}</Text>
-                    <Text style={[styles.valor, { color: tipo === 'receita' ? '#2e7d32' : '#c62828' }]}>
+                    <Text style={[
+                        styles.valor,
+                        { color: tipo === 'receita' ? '#2e7d32' : '#c62828' }
+                    ]}>
                         {tipo === 'receita' ? '+' : '-'} R$ {item.valor.toFixed(2)}
                     </Text>
                     <Text style={styles.data}>
                         {tipo === 'receita' ? 'Recebido em: ' : 'Vencimento: '} {item.data}
                     </Text>
-
                     {tipo === 'despesa' && (
                         <Text style={{ color: item.pago ? 'green' : 'red' }}>
                             {item.pago ? 'Pago' : 'Pendente'}
@@ -39,11 +42,12 @@ export function TransactionList({ transacoes, tipo, onTogglePago }: Props) {
                     )}
                 </TouchableOpacity>
             )}
-            ListEmptyComponent={<Text style={styles.empty}>Nenhuma transação cadastrada.</Text>}
+            ListEmptyComponent={
+                <Text style={styles.empty}>Nenhuma transação cadastrada.</Text>
+            }
         />
     );
 }
-
 
 const styles = StyleSheet.create({
     item: {

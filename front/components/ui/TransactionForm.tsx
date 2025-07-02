@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Modal, View, Text, TextInput, Button, StyleSheet } from 'react-native';
 import { Switch } from 'react-native';
 
@@ -7,23 +7,40 @@ type Props = {
     onClose: () => void;
     onSubmit: (data: { descricao: string; valor: number; data: string; pago: boolean}) => void;
     tipo: 'receita' | 'despesa';
+    transacao?: { descricao: string; valor: number; data: string; pago: boolean };
+    isEdit?: boolean;
 };
 
-export function TransactionForm({ visible, onClose, onSubmit, tipo }: Props) {
+export function TransactionForm({ visible, onClose, onSubmit, tipo, transacao, isEdit }: Props) {
     const [descricao, setDescricao] = useState('');
     const [valor, setValor] = useState('');
     const [data, setData] = useState('');
     const [pago, setPago] = useState(false);
+
+    useEffect(() => {
+        if (transacao && isEdit) {
+            setDescricao(transacao.descricao || '');
+            setValor(transacao.valor != null ? String(transacao.valor) : '');
+            setData(transacao.data || '');
+            setPago(transacao.pago ?? false);
+        } else if (visible && !isEdit) {
+            setDescricao('');
+            setValor('');
+            setData('');
+            setPago(false);
+        }
+    }, [visible, transacao, isEdit]);
 
     function handleSubmit() {
         if (!descricao || !valor || !data) {
             alert('Preencha todos os campos!');
             return;
         }
-        onSubmit({ descricao, valor: Number(valor), data, pago});
+        onSubmit({ descricao, valor: Number(valor), data, pago });
         setDescricao('');
         setValor('');
         setData('');
+        setPago(false);
         onClose();
     }
 
@@ -31,7 +48,9 @@ export function TransactionForm({ visible, onClose, onSubmit, tipo }: Props) {
         <Modal visible={visible} animationType="slide" transparent>
             <View style={styles.modalBackground}>
                 <View style={styles.container}>
-                    <Text style={styles.title}>Nova {tipo === 'receita' ? 'Receita' : 'Despesa'}</Text>
+                    <Text style={styles.title}>
+                        {isEdit ? 'Editar Despesa' : `Nova ${tipo === 'receita' ? 'Receita' : 'Despesa'}`}
+                    </Text>
                     <TextInput
                         style={styles.input}
                         placeholder="Descrição"
@@ -52,16 +71,16 @@ export function TransactionForm({ visible, onClose, onSubmit, tipo }: Props) {
                         onChangeText={setData}
                     />
                     <View style={styles.switch}>
-                    <Text>Pago</Text>
-                    <Switch
-                    value={pago}
-                    onValueChange={setPago}
-                    />
+                        <Text>Pago</Text>
+                        <Switch value={pago} onValueChange={setPago} />
                     </View>
-
                     <View style={styles.buttonRow}>
                         <Button title="Cancelar" onPress={onClose} color="#888" />
-                        <Button title="Salvar" onPress={handleSubmit} color={tipo === 'receita' ? '#2e7d32' : '#c62828'} />
+                        <Button
+                            title="Salvar"
+                            onPress={handleSubmit}
+                            color={tipo === 'receita' ? '#2e7d32' : '#c62828'}
+                        />
                     </View>
                 </View>
             </View>
@@ -97,11 +116,9 @@ const styles = StyleSheet.create({
         marginTop: 12,
     },
     switch: {
-        flexDirection: 'row',    
-        alignItems: 'center',     
-        gap: 8,                     
-        marginVertical: 12,         
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 8,
+        marginVertical: 12,
     }
-          
-    
 });
