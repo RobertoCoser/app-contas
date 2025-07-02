@@ -3,6 +3,7 @@ import { View, Text, Button, StyleSheet } from 'react-native';
 import { TransactionList } from '../../components/ui/TransactionList';
 import { TransactionForm } from '../../components/ui/TransactionForm';
 import { useTransacoes } from '../../contexts/TransacoesContext';
+import ProtectedRoute from '../../components/ProtectedRoute';
 
 export default function Despesas() {
     const { transacoes, adicionarTransacao, alternarPago } = useTransacoes();
@@ -14,17 +15,19 @@ export default function Despesas() {
     }
 
     return (
-        <View style={styles.container}>
-            <Text style={styles.title}>Despesas</Text>
-            <TransactionList transacoes={despesas} tipo="despesa" onTogglePago={alternarPago}/>
-            <Button title="Adicionar Despesa" onPress={() => setModalVisible(true)} />
-            <TransactionForm
-                visible={modalVisible}
-                onClose={() => setModalVisible(false)}
-                onSubmit={handleAdicionarDespesa}
-                tipo="despesa"
-            />
-        </View>
+        <ProtectedRoute>
+            <View style={styles.container}>
+                <Text style={styles.title}>Despesas</Text>
+                <TransactionList transacoes={despesas} tipo="despesa" onTogglePago={alternarPago}/>
+                <Button title="Adicionar Despesa" onPress={() => setModalVisible(true)} />
+                <TransactionForm
+                    visible={modalVisible}
+                    onClose={() => setModalVisible(false)}
+                    onSubmit={handleAdicionarDespesa}
+                    tipo="despesa"
+                />
+            </View>
+        </ProtectedRoute>
     );
 }
 

@@ -3,6 +3,7 @@ import { View, Text, Button, StyleSheet } from 'react-native';
 import { TransactionList } from '../../components/ui/TransactionList';
 import { TransactionForm } from '../../components/ui/TransactionForm';
 import { useTransacoes } from '../../contexts/TransacoesContext';
+import ProtectedRoute from '../../components/ProtectedRoute';
 
 export default function Receitas() {
   const { transacoes, adicionarTransacao, alternarPago } = useTransacoes();
@@ -14,17 +15,19 @@ export default function Receitas() {
   }
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Receitas</Text>
-      <TransactionList transacoes={receitas} tipo="receita" onTogglePago={alternarPago} />
-      <Button title="Adicionar Receita" onPress={() => setModalVisible(true)} />
-      <TransactionForm
-        visible={modalVisible}
-        onClose={() => setModalVisible(false)}
-        onSubmit={handleAdicionarReceita}
-        tipo="receita"
-      />
-    </View>
+    <ProtectedRoute>
+      <View style={styles.container}>
+        <Text style={styles.title}>Receitas</Text>
+        <TransactionList transacoes={receitas} tipo="receita" onTogglePago={alternarPago} />
+        <Button title="Adicionar Receita" onPress={() => setModalVisible(true)} />
+        <TransactionForm
+          visible={modalVisible}
+          onClose={() => setModalVisible(false)}
+          onSubmit={handleAdicionarReceita}
+          tipo="receita"
+        />
+      </View>
+    </ProtectedRoute>
   );
 }
 

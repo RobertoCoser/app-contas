@@ -5,4 +5,3 @@ const api = axios.create({
 });
 
 export default api;
-npx nodemon src/app.js

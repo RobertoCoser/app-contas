@@ -1,19 +1,25 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, Alert } from 'react-native';
-import axios from 'axios';
+import React, { useState } from "react";
+import { View, Text, TextInput, Button, StyleSheet, Alert } from "react-native";
+import { useRouter } from "expo-router";
+import axios from "axios";
 
-export default function Register({ navigation }) {
-  const [nome, setNome] = useState('');
-  const [email, setEmail] = useState('');
-  const [senha, setSenha] = useState('');
+export default function Register() {
+  const [nome, setNome] = useState("");
+  const [email, setEmail] = useState("");
+  const [senha, setSenha] = useState("");
+  const router = useRouter();
 
   const handleRegister = async () => {
     try {
-      await axios.post('http://localhost:3000/auth/register', { nome, email, senha });
-      Alert.alert('Sucesso', 'Cadastro realizado!');
-      navigation.navigate('Login');
+      await axios.post("http://localhost:3000/auth/register", {
+        nome,
+        email,
+        senha,
+      });
+      Alert.alert("Sucesso", "Cadastro realizado!");
+      router.replace("/login");
     } catch (err) {
-      Alert.alert('Erro', err.response?.data?.error || 'Erro ao cadastrar');
+      Alert.alert("Erro", err?.response?.data?.error || "Erro ao cadastrar");
     }
   };
 
@@ -40,7 +46,7 @@ export default function Register({ navigation }) {
         secureTextEntry
       />
       <Button title="Cadastrar" onPress={handleRegister} />
-      <Text style={styles.link} onPress={() => navigation.navigate('Login')}>
+      <Text style={styles.link} onPress={() => router.replace("/login")}>
         Já tem conta? Entrar
       </Text>
     </View>
@@ -48,8 +54,19 @@ export default function Register({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: 'center', padding: 16 },
-  title: { fontSize: 24, fontWeight: 'bold', marginBottom: 16, textAlign: 'center' },
-  input: { borderWidth: 1, borderColor: '#ccc', padding: 10, marginBottom: 12, borderRadius: 5 },
-  link: { color: 'blue', marginTop: 12, textAlign: 'center' },
+  container: { flex: 1, justifyContent: "center", padding: 16 },
+  title: {
+    fontSize: 24,
+    fontWeight: "bold",
+    marginBottom: 16,
+    textAlign: "center",
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: "#ccc",
+    padding: 10,
+    marginBottom: 12,
+    borderRadius: 5,
+  },
+  link: { color: "blue", marginTop: 12, textAlign: "center" },
 });
