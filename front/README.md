@@ -44,7 +44,7 @@ Aplicativo mobile para controle de receitas, despesas e saldo, desenvolvido em R
 1. Clone o repositório do backend (caso não esteja neste mesmo projeto):
 
    ```bash
-   git clone https://github.com/RobertoCoser/seu-backend-repo.git
+   git clone https://github.com/RobertoCoser/app-contas/tree/main/backend
    cd seu-backend-repo
    ```
 
